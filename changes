@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>省会人口变化图</title>
+    <style>
+      html,
+      body,
+      #head {
+        padding: 0;
+        margin: 0;
+        height: 8%;
+      }
+
+      #main {
+        width: 1340px;
+        height: 560px;
+        display: flex;
+        display: -webkit-flex;
+        text-align: center;
+      }
+
+      #baseMap {
+        padding: 0;
+        margin: 0;
+        -webkit-flex: 1;
+        flex: 1;
+        height: 100%;
+        width: 50%;
+        border: solid black 3px;
+        float: left;
+      }
+
+      #baseGallery {
+        padding: 0;
+        margin: 0;
+        -webkit-flex: 1;
+        flex: 1;
+        border: solid black 3px;
+        height: 100%;
+        width: 50%;
+        float: right;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.18/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.18/"></script>
+
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/ScaleBar",
+        "esri/widgets/Legend",
+        "esri/widgets/Search",
+        "esri/widgets/LayerList"
+      ], function (
+        Map,
+        MapView,
+        FeatureLayer,
+        ScaleBar,
+        Legend,
+        Search,
+        LayerList
+      ) {
+        var featurelayer = new FeatureLayer({
+          url:
+            "http://www.arcgisonline.cn/server/rest/services/Hosted/CN_34Capital_Population20210421/FeatureServer",
+          id: "省会人口变化"
+        });
+
+        var map = new Map({
+          basemap: "osm"
+        });
+
+        map.add(featurelayer);
+
+        var view = new MapView({
+          container: "baseMap",
+          map: map,
+          zoom: 4,
+          center: [104, 28] // longitude, latitude
+        });
+
+        var scaleBar = new ScaleBar({
+          view: view,
+          unit: "metric",
+          style: "ruler"
+        });
+
+        var legend = new Legend({
+          view: view,
+          layerInfos: [
+            {
+              layer: featurelayer,
+              title: "人口变化"
+            }
+          ]
+        });
+
+        const searchWidget = new Search({
+          view: view
+        });
+
+        var layerList = new LayerList({
+          view: view
+        });
+        // Adds widget below other elements in the top left corner of the view
+        view.ui.add(layerList, {
+          position: "top-left"
+        });
+
+        view.ui.add(searchWidget, {
+          position: "top-right",
+          index: 2
+        });
+
+        view.ui.add(scaleBar, {
+          position: "bottom-right"
+        });
+
+        view.ui.add(legend, {
+          position: "bottom-left"
+        });
+      });
+    </script>
+
+    <script>
+        require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/widgets/BasemapGallery"
+      ], function (Map, MapView, BasemapGallery) {
+          var map = new Map({
+              basemap: "osm"
+          });
+
+          var mapview = new MapView({
+              container: "baseGallery",
+              map: map,
+              zoom: 4,
+              center: [104, 28]
+          });
+
+          var basemapGallery = new BasemapGallery({
+              view: mapview
+          });
+
+          mapview.ui.add(basemapGallery, {
+              position: "top-right"
+          });
+      });
+    </script>
+  </head>
+
+  <body>
+    <header style="color: grey; size: 100px">省会人口变化及底图查看</header>
+    <div id="main">
+      <div id="baseMap"></div>
+      <div id="baseGallery"></div>
+    </div>
+  </body>
+</html>
